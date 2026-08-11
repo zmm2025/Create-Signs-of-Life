@@ -14,7 +14,10 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-version = mod_version
+boolean dev = System.getenv("RELEASE") == null || System.getenv("RELEASE") == "false"
+String buildNumber = System.getenv("BUILD_NUMBER")
+
+version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : "")
 group = mod_group_id
 
 repositories {
