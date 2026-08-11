@@ -25,7 +25,7 @@ repositories {
 }
 
 base {
-    archivesName = mod_id
+    archivesName = 'create-signs-of-life'
 }
 
 // Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
