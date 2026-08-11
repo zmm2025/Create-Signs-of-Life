@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.143'
+    id 'com.gorylenko.gradle-git-properties' version '4.0.1'
     id 'idea'
 }
 
@@ -19,6 +20,23 @@ String buildNumber = System.getenv("BUILD_NUMBER")
 
 version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : "")
 group = mod_group_id
+
+gitProperties {
+    // Keep the embedded metadata useful for identifying a build without including
+    // developer or build-machine details in the published jar.
+    keys = [
+            'git.branch',
+            'git.build.version',
+            'git.commit.id',
+            'git.commit.id.abbrev',
+            'git.commit.time',
+            'git.dirty'
+    ]
+    commitIdAbbrevLength = 10
+    dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXX"
+    dateFormatTimeZone = 'UTC'
+    failOnNoGitDirectory = false
+}
 
 repositories {
     maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
