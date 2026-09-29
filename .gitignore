@@ -25,3 +25,8 @@ run-data
 .vscode
 
 repo
+
+# Local design studies, renders and capture outputs
+/design/
+__pycache__/
+*.pyc

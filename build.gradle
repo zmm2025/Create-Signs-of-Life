@@ -38,6 +38,7 @@ gitProperties {
 }
 
 repositories {
+    mavenCentral()
     maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
     maven { url = "https://maven.ithundxr.dev/snapshots" } // Registrate
 }
@@ -56,6 +57,14 @@ tasks.named('jar', Jar).configure {
 // Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+sourceSets {
+    create('dev') {
+        if (project.hasProperty('localCapture')) java.srcDir 'design/local-dev/java'
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
 neoForge {
     // Specify the version of NeoForge to use.
     version = project.neo_version
@@ -73,11 +82,18 @@ neoForge {
     runs {
         client {
             client()
+            if (project.hasProperty('gameplayCheck')) {
+                programArguments.addAll '--quickPlaySingleplayer', 'Flip Dot Gameplay Test'
+                systemProperty 'flipdot.verify', 'true'
+                systemProperty 'flipdot.showcase', project.findProperty('showcase') ?: 'factory'
+            }
         }
 
         server {
             server()
+            gameDirectory = file('build/server-run')
             programArgument '--nogui'
+            if (project.hasProperty('serverCheck')) systemProperty 'flipdot.serverCheck', 'true'
         }
 
         data {
@@ -92,6 +108,7 @@ neoForge {
         // multi mod projects should define one per mod
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            if (project.hasProperty('gameplayCheck') || project.hasProperty('serverCheck')) sourceSet(sourceSets.dev)
         }
     }
 }
@@ -100,11 +117,24 @@ neoForge {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
+    implementation jarJar("com.github.weisj:jsvg:2.0.0")
+    ['imageio-core','imageio-metadata','imageio-webp'].each { implementation jarJar("com.twelvemonkeys.imageio:${it}:3.15.2") }
+    ['common-lang','common-io','common-image'].each { implementation jarJar("com.twelvemonkeys.common:${it}:3.15.2") }
+    testImplementation 'com.google.code.gson:gson:2.10.1'
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
+    if (project.hasProperty('youtubeCheck')) systemProperty 'flipdot.youtubeCheck', 'true'
+    if (project.hasProperty('mediaChecks')) systemProperty 'flipdot.mediaChecks', 'true'
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
