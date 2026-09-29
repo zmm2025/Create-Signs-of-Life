@@ -14,7 +14,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "create_signs_of_life:flip_dot_display"
+        "recipe": "create_signs_of_life:flip_disc_display"
       }
     }
   },
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "create_signs_of_life:flip_dot_display"
+      "create_signs_of_life:flip_disc_display"
     ]
   }
 }

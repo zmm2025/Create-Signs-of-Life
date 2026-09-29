@@ -1,4 +1,4 @@
-package com.zmm2025.createsignsoflife.flipdot;
+package com.zmm2025.createsignsoflife.flipdisc;
 
 import java.util.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -11,8 +11,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
 import com.zmm2025.createsignsoflife.media.MediaClip;
 
-public class FlipDotBlockEntity extends KineticBlockEntity {
-    public static java.util.function.Consumer<FlipDotBlockEntity> clientTick=be->{};
+public class FlipDiscBlockEntity extends KineticBlockEntity {
+    public static java.util.function.Consumer<FlipDiscBlockEntity> clientTick=be->{};
     private boolean soundController;
     private long displayed, pending, flipStarted;
     private int duration = 1;
@@ -28,38 +28,38 @@ public class FlipDotBlockEntity extends KineticBlockEntity {
     private long[] knownMembers=new long[0];
     private String rowText = "";
     private boolean hasText, bitmapMode;
-    private FlipDotAssembly assembly;
+    private FlipDiscAssembly assembly;
     private long lastAssemblyScan = Long.MIN_VALUE / 2;
     private MediaClip media;
     private int mediaFrame;
     private boolean mediaPlaying, mediaLoop=true;
 
-    public FlipDotBlockEntity(BlockPos pos, BlockState state) {
-        super(ModContent.FLIP_DOT_ENTITY.get(), pos, state);
+    public FlipDiscBlockEntity(BlockPos pos, BlockState state) {
+        super(ModContent.FLIP_DISC_ENTITY.get(), pos, state);
         setLazyTickRate(20);
     }
     @Override public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
-    public FlipDotAssembly assembly() {
+    public FlipDiscAssembly assembly() {
         if(level==null)return null;
         if(knownController!=null) {
             if(!level.hasChunkAt(knownController))return null;
-            if(level.getBlockEntity(knownController) instanceof FlipDotBlockEntity controller)
+            if(level.getBlockEntity(knownController) instanceof FlipDiscBlockEntity controller)
                 for(long member:controller.knownMembers)if(!level.hasChunkAt(BlockPos.of(member)))return null;
         }
-        return FlipDotAssembly.find(level, worldPosition);
+        return FlipDiscAssembly.find(level, worldPosition);
     }
     @Override public void lazyTick() {
         super.lazyTick();
         if (level == null || level.isClientSide) return;
         if (assembly != null && !assembly.controller().isRemoved() && level.getGameTime() - assembly.controller().lastAssemblyScan < 20) return;
-        FlipDotAssembly found = assembly();
+        FlipDiscAssembly found = assembly();
         if (found == null) { assembly = null; return; }
         // Existing panels donate their palette to new panels. When two boards join,
         // the uppermost, then leftmost established panel wins deterministically.
         var donor = found.tiles().stream().filter(t -> t.paletteSet)
-            .min(Comparator.<FlipDotBlockEntity>comparingInt(t -> found.row(t.worldPosition))
+            .min(Comparator.<FlipDiscBlockEntity>comparingInt(t -> found.row(t.worldPosition))
                 .thenComparingInt(t -> found.column(t.worldPosition))).orElse(found.controller());
-        for (FlipDotBlockEntity tile : found.tiles()) {
+        for (FlipDiscBlockEntity tile : found.tiles()) {
             tile.assembly = found;
             boolean controllerFlag=tile==found.controller();if(tile.soundController!=controllerFlag){tile.soundController=controllerFlag;tile.sendData();}
             tile.applyPalette(donor.backDye, donor.dye, donor.paletteSet);
@@ -75,14 +75,14 @@ public class FlipDotBlockEntity extends KineticBlockEntity {
         found.controller().lastAssemblyScan = level.getGameTime();
         found.controller().rasterize(found);
     }
-    private void rasterize(FlipDotAssembly group) {
+    private void rasterize(FlipDiscAssembly group) {
         String[] lines = new String[group.height()];
         int[] firstColumn = new int[group.height()]; Arrays.fill(firstColumn, Integer.MAX_VALUE); Arrays.fill(lines, "");
-        for (FlipDotBlockEntity tile : group.tiles()) {
+        for (FlipDiscBlockEntity tile : group.tiles()) {
             int row = group.row(tile.worldPosition), col = group.column(tile.worldPosition);
             if (tile.hasText && col < firstColumn[row]) { firstColumn[row] = col; lines[row] = tile.rowText; }
         }
-        for (FlipDotBlockEntity tile : group.tiles()) {
+        for (FlipDiscBlockEntity tile : group.tiles()) {
             int row = group.row(tile.worldPosition);
             if (tile.bitmapMode) continue;
             if (firstColumn[row] != Integer.MAX_VALUE && (!tile.hasText || !tile.rowText.equals(lines[row]))) {
@@ -93,14 +93,14 @@ public class FlipDotBlockEntity extends KineticBlockEntity {
         }
     }
     public void setTextAtBlock(String text) {
-        FlipDotAssembly group = assembly();
+        FlipDiscAssembly group = assembly();
         if (group != null) group.controller().setLine(group, group.row(worldPosition), text);
     }
-    public void setLine(FlipDotAssembly group, int row, String text) {
+    public void setLine(FlipDiscAssembly group, int row, String text) {
         if (row < 0 || row >= group.height()) return;
         group.controller().clearMedia();
         String bounded = text.codePoints().limit(256).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
-        for (FlipDotBlockEntity tile : group.tiles()) {
+        for (FlipDiscBlockEntity tile : group.tiles()) {
             tile.assembly = group;
             if (group.row(tile.worldPosition) != row) continue;
             tile.rowText = bounded; tile.hasText = true; tile.bitmapMode = false;
@@ -111,10 +111,10 @@ public class FlipDotBlockEntity extends KineticBlockEntity {
     /** Queues one row-major 64-bit mask per tile, using the same powered, atomic refresh as text. */
     public boolean submitFrame(long[] masks, int columns, int rows) {
         if (level == null || level.isClientSide) return false;
-        FlipDotAssembly group = assembly();
+        FlipDiscAssembly group = assembly();
         if (group == null || columns != group.width() || rows != group.height() || masks.length != columns * rows) return false;
         group.controller().clearMedia();
-        for (FlipDotBlockEntity tile : group.tiles()) {
+        for (FlipDiscBlockEntity tile : group.tiles()) {
             tile.assembly = group; tile.bitmapMode = true; tile.hasText = false; tile.rowText = "";
             tile.pending = masks[group.row(tile.worldPosition) * columns + group.column(tile.worldPosition)];
             tile.setChanged();
@@ -141,7 +141,7 @@ public class FlipDotBlockEntity extends KineticBlockEntity {
     public int mediaFrameCount(){return media==null?0:media.count();}
     public boolean mediaPlaybackEnabled(){return mediaPlaying;}
     public boolean mediaLoops(){return mediaLoop;}
-    private void queueMediaFrame(FlipDotAssembly group,long[] frame) {
+    private void queueMediaFrame(FlipDiscAssembly group,long[] frame) {
         for(var tile:group.tiles()) {
             tile.pending=frame[group.row(tile.worldPosition)*group.width()+group.column(tile.worldPosition)];
             tile.bitmapMode=true;tile.hasText=false;tile.rowText="";tile.setChanged();
@@ -242,6 +242,6 @@ public class FlipDotBlockEntity extends KineticBlockEntity {
         if(knownMembers.length>256)knownMembers=new long[0];
         restoreClock=!clientPacket;wasPowered=tag.getBoolean("WasPowered");playbackDelay=Math.clamp(tag.getInt("PlaybackDelay"),0,20/MediaClip.FPS);
         String text = tag.getString("RowText"); rowText = text.substring(0, Math.min(512, text.length())); hasText = tag.getBoolean("HasText"); bitmapMode = tag.getBoolean("BitmapMode");
-        if(!clientPacket){media=null;if(tag.contains("MediaArchive")||tag.contains("MediaFrames")||tag.contains("MediaPacked"))try{media=tag.contains("MediaArchive")?MediaClip.fromArchive(tag.getByteArray("MediaArchive")):tag.contains("MediaPacked")?MediaClip.unpack(tag.getInt("MediaColumns"),tag.getInt("MediaRows"),tag.getInt("MediaCount"),tag.getByteArray("MediaPacked"),tag.getString("MediaFilename")):new MediaClip(tag.getInt("MediaColumns"),tag.getInt("MediaRows"),tag.getLongArray("MediaFrames"));mediaFrame=Math.floorMod(tag.getInt("MediaFrame"),media.count());mediaPlaying=tag.getBoolean("MediaPlaying");mediaLoop=tag.getBoolean("MediaLoop");}catch(IllegalArgumentException ignored){mediaPlaying=false;}}
+        if(!clientPacket){media=null;if(tag.contains("MediaArchive"))try{media=MediaClip.fromArchive(tag.getByteArray("MediaArchive"));mediaFrame=Math.floorMod(tag.getInt("MediaFrame"),media.count());mediaPlaying=tag.getBoolean("MediaPlaying");mediaLoop=tag.getBoolean("MediaLoop");}catch(IllegalArgumentException ignored){mediaPlaying=false;}}
     }
 }

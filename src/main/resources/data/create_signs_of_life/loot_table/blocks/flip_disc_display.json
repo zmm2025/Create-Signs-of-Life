@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "create_signs_of_life:flip_dot_display"
+          "name": "create_signs_of_life:flip_disc_display"
         }
       ],
       "conditions": [

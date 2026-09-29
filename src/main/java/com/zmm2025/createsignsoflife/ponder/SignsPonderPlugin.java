@@ -3,7 +3,7 @@ package com.zmm2025.createsignsoflife.ponder;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import com.zmm2025.createsignsoflife.*;
-import com.zmm2025.createsignsoflife.flipdot.*;
+import com.zmm2025.createsignsoflife.flipdisc.*;
 import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.registration.*;
 import net.createmod.ponder.api.scene.*;
@@ -14,14 +14,14 @@ import net.minecraft.world.item.*;
 public final class SignsPonderPlugin implements PonderPlugin {
     public String getModId() { return CreateSignsOfLife.MOD_ID; }
     public void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {
-        helper.forComponents(ModContent.FLIP_DOT.getId())
-            .addStoryBoard("flip_dot", SignsPonderPlugin::drive)
-            .addStoryBoard("flip_dot", SignsPonderPlugin::information)
-            .addStoryBoard("flip_dot", SignsPonderPlugin::media);
+        helper.forComponents(ModContent.FLIP_DISC.getId())
+            .addStoryBoard("flip_disc", SignsPonderPlugin::drive)
+            .addStoryBoard("flip_disc", SignsPonderPlugin::information)
+            .addStoryBoard("flip_disc", SignsPonderPlugin::media);
     }
     public void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
-        helper.addToTag(ResourceLocation.fromNamespaceAndPath("create", "kinetic_appliances")).add(ModContent.FLIP_DOT.getId());
-        helper.addToTag(ResourceLocation.fromNamespaceAndPath("create", "display_targets")).add(ModContent.FLIP_DOT.getId());
+        helper.addToTag(ResourceLocation.fromNamespaceAndPath("create", "kinetic_appliances")).add(ModContent.FLIP_DISC.getId());
+        helper.addToTag(ResourceLocation.fromNamespaceAndPath("create", "display_targets")).add(ModContent.FLIP_DISC.getId());
     }
     private static CreateSceneBuilder base(SceneBuilder builder, SceneBuildingUtil util, String id, String title) {
         var scene = new CreateSceneBuilder(builder);
@@ -32,14 +32,14 @@ public final class SignsPonderPlugin implements PonderPlugin {
     private static void text(CreateSceneBuilder scene, String value, float rpm) {
         for (int x=1; x<=4; x++) {
             int column=4-x;
-            scene.world().modifyBlockEntity(new BlockPos(x, 2, 3), FlipDotBlockEntity.class, be -> {
+            scene.world().modifyBlockEntity(new BlockPos(x, 2, 3), FlipDiscBlockEntity.class, be -> {
                 be.showVirtualFrame(DotMatrix.tile(value,column,32),rpm);
             });
         }
     }
     public static void drive(SceneBuilder builder, SceneBuildingUtil util) {
-        var scene=base(builder, util, "flip_dot_drive", "Building and powering a Flip-Dot Display");
-        scene.overlay().showText(80).text("Each block has 8 by 8 discs. Place matching faces together to build one seamless canvas.")
+        var scene=base(builder, util, "flip_disc_drive", "Building and powering a Flip-Disc Display");
+        scene.overlay().showText(80).text("Each block has 8 by 8 dots. Place matching faces together to build one seamless canvas.")
             .pointAt(util.vector().of(3, 2, 3)).placeNearTarget().attachKeyFrame(); scene.idle(90);
         scene.world().showSection(util.select().fromTo(0, 1, 3, 0, 1, 4), Direction.EAST);
         scene.world().setKineticSpeed(util.select().everywhere(), 16); text(scene, "IRON", 16);
@@ -54,7 +54,7 @@ public final class SignsPonderPlugin implements PonderPlugin {
         scene.markAsFinished();
     }
     public static void information(SceneBuilder builder, SceneBuildingUtil util) {
-        var scene=base(builder, util, "flip_dot_information", "Text, Display Links and dye");
+        var scene=base(builder, util, "flip_disc_information", "Text, Display Links and dye");
         scene.world().showSection(util.select().fromTo(0, 1, 3, 0, 1, 4), Direction.EAST);
         scene.world().setKineticSpeed(util.select().everywhere(), 64); text(scene, "IRON", 64);
         scene.overlay().showControls(util.vector().of(3, 2.5, 3), Pointing.RIGHT, 70).rightClick().withItem(AllBlocks.DISPLAY_LINK.asStack());
@@ -64,14 +64,14 @@ public final class SignsPonderPlugin implements PonderPlugin {
         text(scene, "READY", 64);
         scene.overlay().showText(80).text("A renamed Name Tag writes one row. A Create Clipboard writes several rows. Right-click with an empty hand to open media controls.")
             .pointAt(util.vector().of(3, 2, 3)).placeNearTarget().attachKeyFrame(); scene.idle(90);
-        scene.world().modifyBlockEntity(new BlockPos(4, 2, 3), FlipDotBlockEntity.class, be -> be.setDye(DyeColor.LIME));
+        scene.world().modifyBlockEntity(new BlockPos(4, 2, 3), FlipDiscBlockEntity.class, be -> be.setDye(DyeColor.LIME));
         scene.overlay().showControls(util.vector().of(4, 2.5, 3), Pointing.RIGHT, 60).rightClick().withItem(new ItemStack(Items.LIME_DYE));
         scene.overlay().showText(80).text("Dye changes the front color across the whole board. Applying either existing color swaps front and back. Apply a new dye twice to make it the back color.")
             .pointAt(util.vector().of(4, 2, 3)).placeNearTarget().attachKeyFrame(); scene.idle(90);
         scene.markAsFinished();
     }
     public static void media(SceneBuilder builder, SceneBuildingUtil util) {
-        var scene=base(builder, util, "flip_dot_media", "Images, video and pixel drawings");
+        var scene=base(builder, util, "flip_disc_media", "Images, video and pixel drawings");
         scene.overlay().showControls(util.vector().of(3,2.5,3),Pointing.RIGHT,60).rightClick();
         scene.overlay().showText(100).text("Right-click with an empty hand. Enter a media URL, public YouTube video or local file, import a preview, then apply it.")
             .pointAt(util.vector().of(3,2,3)).placeNearTarget().attachKeyFrame();scene.idle(110);
@@ -79,10 +79,10 @@ public final class SignsPonderPlugin implements PonderPlugin {
             .pointAt(util.vector().of(3,2,3)).placeNearTarget().attachKeyFrame();scene.idle(110);
         scene.world().showSection(util.select().fromTo(0,1,3,0,1,4),Direction.EAST);scene.world().setKineticSpeed(util.select().everywhere(),256);
         text(scene,"PLAY",256);
-        scene.overlay().showText(100).text("Disc frames are saved in the world. Slow cogs may not finish each flip before the next frame arrives. New Display Link input replaces media playback.")
+        scene.overlay().showText(100).text("Dot frames are saved in the world. Slow cogs may not finish each flip before the next frame arrives. New Display Link input replaces media playback.")
             .pointAt(util.vector().of(3,2,3)).placeNearTarget().attachKeyFrame();scene.idle(110);
         scene.overlay().showControls(util.vector().of(3,2.5,3),Pointing.RIGHT,60).rightClick().withItem(AllBlocks.CLIPBOARD.asStack());
-        scene.overlay().showText(100).text("For hand-drawn symbols, start a Clipboard page with [pixels]. Add rows using # for light discs and dots or spaces for dark discs.")
+        scene.overlay().showText(100).text("For hand-drawn symbols, start a Clipboard page with [pixels]. Add rows using # for light dots and periods or spaces for dark dots.")
             .pointAt(util.vector().of(3,2,3)).placeNearTarget().attachKeyFrame();scene.idle(110);scene.markAsFinished();
     }
 }

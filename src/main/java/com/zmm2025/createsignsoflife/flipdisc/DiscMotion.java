@@ -1,4 +1,4 @@
-package com.zmm2025.createsignsoflife.flipdot;
+package com.zmm2025.createsignsoflife.flipdisc;
 
 import java.util.Arrays;
 

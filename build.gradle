@@ -83,9 +83,9 @@ neoForge {
         client {
             client()
             if (project.hasProperty('gameplayCheck')) {
-                programArguments.addAll '--quickPlaySingleplayer', 'Flip Dot Gameplay Test'
-                systemProperty 'flipdot.verify', 'true'
-                systemProperty 'flipdot.showcase', project.findProperty('showcase') ?: 'factory'
+                programArguments.addAll '--quickPlaySingleplayer', project.findProperty('testWorld') ?: 'Flip Disc Gameplay Test'
+                systemProperty 'flipdisc.verify', 'true'
+                systemProperty 'flipdisc.showcase', project.findProperty('showcase') ?: 'factory'
             }
         }
 
@@ -93,7 +93,7 @@ neoForge {
             server()
             gameDirectory = file('build/server-run')
             programArgument '--nogui'
-            if (project.hasProperty('serverCheck')) systemProperty 'flipdot.serverCheck', 'true'
+            if (project.hasProperty('serverCheck')) systemProperty 'flipdisc.serverCheck', 'true'
         }
 
         data {
@@ -133,8 +133,8 @@ dependencies {
 
 tasks.named('test', Test).configure {
     useJUnitPlatform()
-    if (project.hasProperty('youtubeCheck')) systemProperty 'flipdot.youtubeCheck', 'true'
-    if (project.hasProperty('mediaChecks')) systemProperty 'flipdot.mediaChecks', 'true'
+    if (project.hasProperty('youtubeCheck')) systemProperty 'flipdisc.youtubeCheck', 'true'
+    if (project.hasProperty('mediaChecks')) systemProperty 'flipdisc.mediaChecks', 'true'
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

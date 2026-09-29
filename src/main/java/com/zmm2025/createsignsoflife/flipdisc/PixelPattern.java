@@ -1,8 +1,8 @@
-package com.zmm2025.createsignsoflife.flipdot;
+package com.zmm2025.createsignsoflife.flipdisc;
 
 import java.util.List;
 
-/** Clipboard drawings use # for a light disc and . or a space for a dark disc. */
+/** Clipboard drawings use # for a light dot and . or a space for a dark dot. */
 public final class PixelPattern {
     private PixelPattern() {}
     public static long[] parse(List<String> lines, int columns, int rows) {
