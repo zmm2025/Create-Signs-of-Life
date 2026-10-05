@@ -123,7 +123,7 @@ public final class MediaDecoder {
             process=builder.redirectError(errors.toFile()).redirectOutput(ProcessBuilder.Redirect.DISCARD).start();
             if(!process.waitFor(90,TimeUnit.SECONDS))throw new IOException("Media conversion exceeded 90 seconds.");
             if(process.exitValue()!=0 || !Files.exists(raw) || Files.size(raw)==0){
-                System.err.println("Flip-disc decoder: "+Files.readString(errors));
+                System.err.println("Flip-dot decoder: "+Files.readString(errors));
                 throw new IOException("Cannot decode this media. Check the file format and try a direct media link or a public YouTube video.");
             }
             long size=Files.size(raw);if(size>(long)w*h*4*MediaClip.MAX_FRAMES || size%(w*h*4)!=0)throw new IOException("Decoded media exceeds the frame limit.");

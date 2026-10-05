@@ -2,7 +2,7 @@ package com.zmm2025.createsignsoflife;
 
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.simibubi.create.api.registry.CreateRegistries;
-import com.zmm2025.createsignsoflife.flipdisc.*;
+import com.zmm2025.createsignsoflife.flipdot.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
@@ -21,14 +21,14 @@ public final class ModContent {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, ID);
     public static final DeferredRegister<BlockEntityType<?>> ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, ID);
     public static final DeferredRegister<DisplayTarget> TARGETS = DeferredRegister.create(CreateRegistries.DISPLAY_TARGET, ID);
-    public static final DeferredHolder<Block, FlipDiscBlock> FLIP_DISC = BLOCKS.register("flip_disc_display",
-        () -> new FlipDiscBlock(BlockBehaviour.Properties.of().strength(3,6).requiresCorrectToolForDrops()
+    public static final DeferredHolder<Block, FlipDotBlock> FLIP_DOT = BLOCKS.register("flip_dot_display",
+        () -> new FlipDotBlock(BlockBehaviour.Properties.of().strength(3,6).requiresCorrectToolForDrops()
             .mapColor(net.minecraft.world.level.material.MapColor.COLOR_GRAY).sound(SoundType.METAL).noOcclusion()));
-    public static final DeferredHolder<Item, BlockItem> FLIP_DISC_ITEM = ITEMS.register("flip_disc_display",
-        () -> new FlipDiscItem(FLIP_DISC.get(), new Item.Properties()));
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FlipDiscBlockEntity>> FLIP_DISC_ENTITY =
-        ENTITIES.register("flip_disc_display", () -> BlockEntityType.Builder.of(FlipDiscBlockEntity::new, FLIP_DISC.get()).build(null));
-    public static final DeferredHolder<DisplayTarget, FlipDiscDisplayTarget> TARGET = TARGETS.register("flip_disc_display", FlipDiscDisplayTarget::new);
+    public static final DeferredHolder<Item, BlockItem> FLIP_DOT_ITEM = ITEMS.register("flip_dot_display",
+        () -> new FlipDotItem(FLIP_DOT.get(), new Item.Properties()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FlipDotBlockEntity>> FLIP_DOT_ENTITY =
+        ENTITIES.register("flip_dot_display", () -> BlockEntityType.Builder.of(FlipDotBlockEntity::new, FLIP_DOT.get()).build(null));
+    public static final DeferredHolder<DisplayTarget, FlipDotDisplayTarget> TARGET = TARGETS.register("flip_dot_display", FlipDotDisplayTarget::new);
 
     public static void register(IEventBus bus) {
         SOUNDS.register(bus); BLOCKS.register(bus); ITEMS.register(bus); ENTITIES.register(bus); TARGETS.register(bus);
@@ -36,8 +36,8 @@ public final class ModContent {
     }
 
     private static void creativeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.REDSTONE_BLOCKS) event.accept(FLIP_DISC_ITEM.get());
+        if (event.getTabKey() == CreativeModeTabs.REDSTONE_BLOCKS) event.accept(FLIP_DOT_ITEM.get());
         if (event.getTabKey().equals(com.simibubi.create.AllCreativeModeTabs.BASE_CREATIVE_TAB.getKey()))
-            event.insertAfter(com.simibubi.create.AllBlocks.DISPLAY_BOARD.asStack(), new ItemStack(FLIP_DISC_ITEM.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.insertAfter(com.simibubi.create.AllBlocks.DISPLAY_BOARD.asStack(), new ItemStack(FLIP_DOT_ITEM.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
     }
 }

@@ -1,6 +1,6 @@
 package com.zmm2025.createsignsoflife;
 
-import com.zmm2025.createsignsoflife.flipdisc.FlipDiscRenderer;
+import com.zmm2025.createsignsoflife.flipdot.FlipDotRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -12,7 +12,7 @@ public final class ClientEvents {
         event.register(com.zmm2025.createsignsoflife.media.MediaScreen.PREVIEW_MODEL);
     }
     @SubscribeEvent public static void setup(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
-        com.zmm2025.createsignsoflife.flipdisc.FlipDiscBlockEntity.clientTick=com.zmm2025.createsignsoflife.flipdisc.DiscRattle::update;
+        com.zmm2025.createsignsoflife.flipdot.FlipDotBlockEntity.clientTick=com.zmm2025.createsignsoflife.flipdot.DiscRattle::update;
         net.createmod.ponder.foundation.PonderIndex.addPlugin(new com.zmm2025.createsignsoflife.ponder.SignsPonderPlugin());
         com.zmm2025.createsignsoflife.media.MediaNetwork.openScreen = data -> net.minecraft.client.Minecraft.getInstance().setScreen(
             new com.zmm2025.createsignsoflife.media.MediaScreen(data.pos(),data.columns(),data.rows(),data.filename(),data.thumbnail(),data.frames(),data.playing(),data.loop()));
@@ -24,6 +24,6 @@ public final class ClientEvents {
         };
     }
     @SubscribeEvent public static void renderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(ModContent.FLIP_DISC_ENTITY.get(), FlipDiscRenderer::new);
+        event.registerBlockEntityRenderer(ModContent.FLIP_DOT_ENTITY.get(), FlipDotRenderer::new);
     }
 }

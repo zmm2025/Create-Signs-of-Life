@@ -1,4 +1,4 @@
-package com.zmm2025.createsignsoflife.flipdisc;
+package com.zmm2025.createsignsoflife.flipdot;
 
 import com.zmm2025.createsignsoflife.media.*;
 import java.nio.file.*;
@@ -17,7 +17,7 @@ class MediaDecoderTest {
         var clip=new MediaClip(1,1,new long[]{0,1,-1,dither},"test.mp4");
         var restored=MediaClip.unpack(1,1,4,clip.packed(),clip.filename());assertArrayEquals(clip.frames(),restored.frames());
     }
-    @Test @EnabledIfSystemProperty(named="flipdisc.youtubeCheck",matches="true")
+    @Test @EnabledIfSystemProperty(named="flipdot.youtubeCheck",matches="true")
     void publicYoutubeImport() throws Exception {
         var clip=MediaDecoder.decode("https://www.youtube.com/watch?v=FtutLA63Cp8",1,1,2,128,false,Path.of("build/media-import-test"),System.out::println);
         assertEquals(20,clip.count());
@@ -28,7 +28,7 @@ class MediaDecoderTest {
         assertThrows(IllegalArgumentException.class,()->new MediaClip(8,6,new long[49]));
         assertThrows(IllegalArgumentException.class,()->new MediaClip(1,1,new long[601]));
     }
-    @Test @EnabledIfSystemProperty(named="flipdisc.mediaChecks",matches="true")
+    @Test @EnabledIfSystemProperty(named="flipdot.mediaChecks",matches="true")
     void importsAllRequestedFormatsWithTheReleaseDecoder() throws Exception {
         for(String extension:new String[]{"png","jpg","jpeg","heic","heif","ico","webp","svg","gif","apng","mp4","mov","mkv","webm"}) {
             var clip=MediaDecoder.decode(Path.of("build/media-decoder-check/sample."+extension).toAbsolutePath().toString(),8,6,2,128,false,Path.of("build/media-import-test"),System.out::println);

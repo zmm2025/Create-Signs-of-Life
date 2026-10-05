@@ -1,7 +1,7 @@
 package com.zmm2025.createsignsoflife.media;
 
 import com.zmm2025.createsignsoflife.CreateSignsOfLife;
-import com.zmm2025.createsignsoflife.flipdisc.*;
+import com.zmm2025.createsignsoflife.flipdot.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -85,10 +85,10 @@ public final class MediaNetwork {
                 p.action.equals("status")?group.controller().mediaFilename()+" | "+group.controller().mediaFrameCount()+" frames. 10 FPS; rotation controls disc motion.":"Display updated: "+p.action,group.controller().mediaLoops(),group.controller().mediaFrameCount(),group.controller().mediaPlaybackEnabled()));
         });
     }
-    private static FlipDiscBlockEntity editable(ServerPlayer player,BlockPos pos) {
+    private static FlipDotBlockEntity editable(ServerPlayer player,BlockPos pos) {
         if(!player.mayBuild() || player.isSpectator() || player.distanceToSqr(pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5)>64
             || !player.level().hasChunkAt(pos) || !player.level().mayInteract(player,pos))return null;
-        return player.level().getBlockEntity(pos) instanceof FlipDiscBlockEntity be?be:null;
+        return player.level().getBlockEntity(pos) instanceof FlipDotBlockEntity be?be:null;
     }
     private static void receive(Part p,ServerPlayer player) {
         UPLOADS.values().removeIf(u->u.expires<System.nanoTime());

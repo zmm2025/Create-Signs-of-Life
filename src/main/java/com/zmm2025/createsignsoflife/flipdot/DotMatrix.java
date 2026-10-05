@@ -1,4 +1,4 @@
-package com.zmm2025.createsignsoflife.flipdisc;
+package com.zmm2025.createsignsoflife.flipdot;
 
 import java.io.*;
 
@@ -6,10 +6,10 @@ import java.io.*;
 public final class DotMatrix {
     private static final byte[] FONT;
     static {
-        try (InputStream stream = DotMatrix.class.getResourceAsStream("/assets/create_signs_of_life/flip_disc_font.bin")) {
-            if (stream == null) throw new IOException("Missing flip-disc font");
+        try (InputStream stream = DotMatrix.class.getResourceAsStream("/assets/create_signs_of_life/flip_dot_font.bin")) {
+            if (stream == null) throw new IOException("Missing flip-dot font");
             FONT = stream.readAllBytes();
-            if (FONT.length != 95 * 9) throw new IOException("Invalid flip-disc font");
+            if (FONT.length != 95 * 9) throw new IOException("Invalid flip-dot font");
         } catch (IOException e) { throw new ExceptionInInitializerError(e); }
     }
     private DotMatrix() {}

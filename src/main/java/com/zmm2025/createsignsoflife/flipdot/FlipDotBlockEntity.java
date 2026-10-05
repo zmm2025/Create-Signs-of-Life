@@ -1,4 +1,4 @@
-package com.zmm2025.createsignsoflife.flipdisc;
+package com.zmm2025.createsignsoflife.flipdot;
 
 import java.util.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -11,8 +11,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
 import com.zmm2025.createsignsoflife.media.MediaClip;
 
-public class FlipDiscBlockEntity extends KineticBlockEntity {
-    public static java.util.function.Consumer<FlipDiscBlockEntity> clientTick=be->{};
+public class FlipDotBlockEntity extends KineticBlockEntity {
+    public static java.util.function.Consumer<FlipDotBlockEntity> clientTick=be->{};
     private boolean soundController;
     private long displayed, pending, flipStarted;
     private int duration = 1;
@@ -28,38 +28,38 @@ public class FlipDiscBlockEntity extends KineticBlockEntity {
     private long[] knownMembers=new long[0];
     private String rowText = "";
     private boolean hasText, bitmapMode;
-    private FlipDiscAssembly assembly;
+    private FlipDotAssembly assembly;
     private long lastAssemblyScan = Long.MIN_VALUE / 2;
     private MediaClip media;
     private int mediaFrame;
     private boolean mediaPlaying, mediaLoop=true;
 
-    public FlipDiscBlockEntity(BlockPos pos, BlockState state) {
-        super(ModContent.FLIP_DISC_ENTITY.get(), pos, state);
+    public FlipDotBlockEntity(BlockPos pos, BlockState state) {
+        super(ModContent.FLIP_DOT_ENTITY.get(), pos, state);
         setLazyTickRate(20);
     }
     @Override public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
-    public FlipDiscAssembly assembly() {
+    public FlipDotAssembly assembly() {
         if(level==null)return null;
         if(knownController!=null) {
             if(!level.hasChunkAt(knownController))return null;
-            if(level.getBlockEntity(knownController) instanceof FlipDiscBlockEntity controller)
+            if(level.getBlockEntity(knownController) instanceof FlipDotBlockEntity controller)
                 for(long member:controller.knownMembers)if(!level.hasChunkAt(BlockPos.of(member)))return null;
         }
-        return FlipDiscAssembly.find(level, worldPosition);
+        return FlipDotAssembly.find(level, worldPosition);
     }
     @Override public void lazyTick() {
         super.lazyTick();
         if (level == null || level.isClientSide) return;
         if (assembly != null && !assembly.controller().isRemoved() && level.getGameTime() - assembly.controller().lastAssemblyScan < 20) return;
-        FlipDiscAssembly found = assembly();
+        FlipDotAssembly found = assembly();
         if (found == null) { assembly = null; return; }
         // Existing panels donate their palette to new panels. When two boards join,
         // the uppermost, then leftmost established panel wins deterministically.
         var donor = found.tiles().stream().filter(t -> t.paletteSet)
-            .min(Comparator.<FlipDiscBlockEntity>comparingInt(t -> found.row(t.worldPosition))
+            .min(Comparator.<FlipDotBlockEntity>comparingInt(t -> found.row(t.worldPosition))
                 .thenComparingInt(t -> found.column(t.worldPosition))).orElse(found.controller());
-        for (FlipDiscBlockEntity tile : found.tiles()) {
+        for (FlipDotBlockEntity tile : found.tiles()) {
             tile.assembly = found;
             boolean controllerFlag=tile==found.controller();if(tile.soundController!=controllerFlag){tile.soundController=controllerFlag;tile.sendData();}
             tile.applyPalette(donor.backDye, donor.dye, donor.paletteSet);
@@ -75,14 +75,14 @@ public class FlipDiscBlockEntity extends KineticBlockEntity {
         found.controller().lastAssemblyScan = level.getGameTime();
         found.controller().rasterize(found);
     }
-    private void rasterize(FlipDiscAssembly group) {
+    private void rasterize(FlipDotAssembly group) {
         String[] lines = new String[group.height()];
         int[] firstColumn = new int[group.height()]; Arrays.fill(firstColumn, Integer.MAX_VALUE); Arrays.fill(lines, "");
-        for (FlipDiscBlockEntity tile : group.tiles()) {
+        for (FlipDotBlockEntity tile : group.tiles()) {
             int row = group.row(tile.worldPosition), col = group.column(tile.worldPosition);
             if (tile.hasText && col < firstColumn[row]) { firstColumn[row] = col; lines[row] = tile.rowText; }
         }
-        for (FlipDiscBlockEntity tile : group.tiles()) {
+        for (FlipDotBlockEntity tile : group.tiles()) {
             int row = group.row(tile.worldPosition);
             if (tile.bitmapMode) continue;
             if (firstColumn[row] != Integer.MAX_VALUE && (!tile.hasText || !tile.rowText.equals(lines[row]))) {
@@ -93,14 +93,14 @@ public class FlipDiscBlockEntity extends KineticBlockEntity {
         }
     }
     public void setTextAtBlock(String text) {
-        FlipDiscAssembly group = assembly();
+        FlipDotAssembly group = assembly();
         if (group != null) group.controller().setLine(group, group.row(worldPosition), text);
     }
-    public void setLine(FlipDiscAssembly group, int row, String text) {
+    public void setLine(FlipDotAssembly group, int row, String text) {
         if (row < 0 || row >= group.height()) return;
         group.controller().clearMedia();
         String bounded = text.codePoints().limit(256).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
-        for (FlipDiscBlockEntity tile : group.tiles()) {
+        for (FlipDotBlockEntity tile : group.tiles()) {
             tile.assembly = group;
             if (group.row(tile.worldPosition) != row) continue;
             tile.rowText = bounded; tile.hasText = true; tile.bitmapMode = false;
@@ -111,10 +111,10 @@ public class FlipDiscBlockEntity extends KineticBlockEntity {
     /** Queues one row-major 64-bit mask per tile, using the same powered, atomic refresh as text. */
     public boolean submitFrame(long[] masks, int columns, int rows) {
         if (level == null || level.isClientSide) return false;
-        FlipDiscAssembly group = assembly();
+        FlipDotAssembly group = assembly();
         if (group == null || columns != group.width() || rows != group.height() || masks.length != columns * rows) return false;
         group.controller().clearMedia();
-        for (FlipDiscBlockEntity tile : group.tiles()) {
+        for (FlipDotBlockEntity tile : group.tiles()) {
             tile.assembly = group; tile.bitmapMode = true; tile.hasText = false; tile.rowText = "";
             tile.pending = masks[group.row(tile.worldPosition) * columns + group.column(tile.worldPosition)];
             tile.setChanged();
@@ -141,7 +141,7 @@ public class FlipDiscBlockEntity extends KineticBlockEntity {
     public int mediaFrameCount(){return media==null?0:media.count();}
     public boolean mediaPlaybackEnabled(){return mediaPlaying;}
     public boolean mediaLoops(){return mediaLoop;}
-    private void queueMediaFrame(FlipDiscAssembly group,long[] frame) {
+    private void queueMediaFrame(FlipDotAssembly group,long[] frame) {
         for(var tile:group.tiles()) {
             tile.pending=frame[group.row(tile.worldPosition)*group.width()+group.column(tile.worldPosition)];
             tile.bitmapMode=true;tile.hasText=false;tile.rowText="";tile.setChanged();

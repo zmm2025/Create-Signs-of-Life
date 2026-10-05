@@ -1,4 +1,4 @@
-package com.zmm2025.createsignsoflife.flipdisc;
+package com.zmm2025.createsignsoflife.flipdot;
 
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
@@ -10,21 +10,21 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Quaternionf;
 
-public class FlipDiscRenderer extends KineticBlockEntityRenderer<FlipDiscBlockEntity> {
+public class FlipDotRenderer extends KineticBlockEntityRenderer<FlipDotBlockEntity> {
     private static final ResourceLocation WHITE = ResourceLocation.fromNamespaceAndPath("create_signs_of_life", "textures/block/disc.png");
     private static final float[][][] PLATES = {
         geometry(-.5625f,.5625f,-.8125f,-.5625f), geometry(-.8125f,.8125f,-.5625f,.5625f), geometry(-.5625f,.5625f,.5625f,.8125f)
     };
     private static final float[][] NORMALS = {{0,0,-1},{0,0,1},{-1,0,0},{1,0,0},{0,1,0},{0,-1,0}};
     private final Quaternionf rotation = new Quaternionf();
-    public FlipDiscRenderer(BlockEntityRendererProvider.Context context) { super(context); }
-    @Override protected void renderSafe(FlipDiscBlockEntity be, float partial, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+    public FlipDotRenderer(BlockEntityRendererProvider.Context context) { super(context); }
+    @Override protected void renderSafe(FlipDotBlockEntity be, float partial, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
         // This block uses its BER even when Flywheel is active; no duplicate visual is registered.
         renderRotatingBuffer(be, CachedBuffers.partialFacingVertical(AllPartialModels.SHAFTLESS_COGWHEEL,
-            be.getBlockState(), be.getBlockState().getValue(FlipDiscBlock.HORIZONTAL_FACING)), pose, buffers.getBuffer(RenderType.solid()), light);
+            be.getBlockState(), be.getBlockState().getValue(FlipDotBlock.HORIZONTAL_FACING)), pose, buffers.getBuffer(RenderType.solid()), light);
         pose.pushPose();
         pose.translate(.5, .5, .5);
-        pose.mulPose(Axis.YP.rotationDegrees(180 - be.getBlockState().getValue(FlipDiscBlock.HORIZONTAL_FACING).toYRot()));
+        pose.mulPose(Axis.YP.rotationDegrees(180 - be.getBlockState().getValue(FlipDotBlock.HORIZONTAL_FACING).toYRot()));
         pose.translate(-.5, -.5, -.5);
         VertexConsumer vertices = buffers.getBuffer(RenderType.entityCutout(WHITE));
         for (int row = 0; row < 8; row++) for (int col = 0; col < 8; col++) {

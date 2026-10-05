@@ -1,4 +1,4 @@
-package com.zmm2025.createsignsoflife.flipdisc;
+package com.zmm2025.createsignsoflife.flipdot;
 
 import com.zmm2025.createsignsoflife.ModContent;
 import net.minecraft.client.Minecraft;
@@ -9,14 +9,14 @@ import java.util.*;
 
 /** One attenuated loop per board; the sole sample is modulated by physical disc motion. */
 public final class DiscRattle extends AbstractTickableSoundInstance {
-    private static final Map<FlipDiscBlockEntity,DiscRattle> SOUNDS=new WeakHashMap<>();
-    private final FlipDiscBlockEntity board;
-    private DiscRattle(FlipDiscBlockEntity board) {
+    private static final Map<FlipDotBlockEntity,DiscRattle> SOUNDS=new WeakHashMap<>();
+    private final FlipDotBlockEntity board;
+    private DiscRattle(FlipDotBlockEntity board) {
         super(ModContent.RATTLE.get(),SoundSource.BLOCKS,RandomSource.create());
         this.board=board;looping=true;delay=0;volume=0;
         x=board.getBlockPos().getX()+.5;y=board.getBlockPos().getY()+.5;z=board.getBlockPos().getZ()+.5;
     }
-    public static void update(FlipDiscBlockEntity board) {
+    public static void update(FlipDotBlockEntity board) {
         var sound=SOUNDS.get(board);
         if(sound!=null&&!sound.isStopped())return;
         sound=new DiscRattle(board);sound.tick();

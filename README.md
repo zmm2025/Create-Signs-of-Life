@@ -1,7 +1,7 @@
 # Create: Signs of Life
 Bring your Create factories to life with new and smarter display technology!
 
-Flip-Disc Displays are implemented for Minecraft 1.21.1 and Create 6.0.10, with tileable 8×8 grids, dyeable discs, Display Link and clipboard input, media import, Ponder tutorials, and cog-driven disc motion and silent media playback at up to 10 FPS.
+Flip-Dot Displays are implemented for Minecraft 1.21.1 and Create 6.0.10, with tileable 8×8 grids, dyeable discs, Display Link and clipboard input, media import, Ponder tutorials, and cog-driven disc motion and silent media playback at up to 10 FPS.
 
 ## 📊 Planned Features & Ideas
 All items are subject to change or removal without notice.

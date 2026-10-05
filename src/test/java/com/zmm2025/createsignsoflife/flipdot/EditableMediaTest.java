@@ -1,4 +1,4 @@
-package com.zmm2025.createsignsoflife.flipdisc;
+package com.zmm2025.createsignsoflife.flipdot;
 
 import com.zmm2025.createsignsoflife.media.*;
 import org.junit.jupiter.api.Test;

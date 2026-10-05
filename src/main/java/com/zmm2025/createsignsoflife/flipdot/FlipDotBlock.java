@@ -1,4 +1,4 @@
-package com.zmm2025.createsignsoflife.flipdisc;
+package com.zmm2025.createsignsoflife.flipdot;
 
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
@@ -25,10 +25,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.*;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-public class FlipDiscBlock extends HorizontalKineticBlock implements IBE<FlipDiscBlockEntity>, ICogWheel, IWrenchable, SimpleWaterloggedBlock {
+public class FlipDotBlock extends HorizontalKineticBlock implements IBE<FlipDotBlockEntity>, ICogWheel, IWrenchable, SimpleWaterloggedBlock {
     private static final int PLACEMENT = PlacementHelpers.register(new IPlacementHelper() {
-        public java.util.function.Predicate<ItemStack> getItemPredicate() { return s -> s.is(ModContent.FLIP_DISC_ITEM.get()); }
-        public java.util.function.Predicate<BlockState> getStatePredicate() { return s -> s.is(ModContent.FLIP_DISC.get()); }
+        public java.util.function.Predicate<ItemStack> getItemPredicate() { return s -> s.is(ModContent.FLIP_DOT_ITEM.get()); }
+        public java.util.function.Predicate<BlockState> getStatePredicate() { return s -> s.is(ModContent.FLIP_DOT.get()); }
         public PlacementOffset getOffset(Player player, Level level, BlockState state, BlockPos pos, BlockHitResult hit) {
             var directions = IPlacementHelper.orderedByDistanceExceptAxis(pos, hit.getLocation(), state.getValue(HORIZONTAL_FACING).getAxis(),
                 d -> level.getBlockState(pos.relative(d)).canBeReplaced());
@@ -36,7 +36,7 @@ public class FlipDiscBlock extends HorizontalKineticBlock implements IBE<FlipDis
                 s -> s.setValue(HORIZONTAL_FACING, state.getValue(HORIZONTAL_FACING)));
         }
     });
-    public FlipDiscBlock(Properties properties) { super(properties); registerDefaultState(defaultBlockState().setValue(WATERLOGGED, false)); }
+    public FlipDotBlock(Properties properties) { super(properties); registerDefaultState(defaultBlockState().setValue(WATERLOGGED, false)); }
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder.add(WATERLOGGED)); }
     @Override public FluidState getFluidState(BlockState state) { return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state); }
     @Override public BlockState updateShape(BlockState state, Direction direction, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
@@ -44,8 +44,8 @@ public class FlipDiscBlock extends HorizontalKineticBlock implements IBE<FlipDis
         return super.updateShape(state, direction, neighbor, level, pos, neighborPos);
     }
     @Override public Direction.Axis getRotationAxis(BlockState state) { return state.getValue(HORIZONTAL_FACING).getAxis(); }
-    @Override public Class<FlipDiscBlockEntity> getBlockEntityClass() { return FlipDiscBlockEntity.class; }
-    @Override public BlockEntityType<? extends FlipDiscBlockEntity> getBlockEntityType() { return ModContent.FLIP_DISC_ENTITY.get(); }
+    @Override public Class<FlipDotBlockEntity> getBlockEntityClass() { return FlipDotBlockEntity.class; }
+    @Override public BlockEntityType<? extends FlipDotBlockEntity> getBlockEntityType() { return ModContent.FLIP_DOT_ENTITY.get(); }
     @Override public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return getRotationAxis(state) == Direction.Axis.Z ? box(0, 0, 3, 16, 16, 13) : box(3, 0, 0, 13, 16, 16);
     }
@@ -60,7 +60,7 @@ public class FlipDiscBlock extends HorizontalKineticBlock implements IBE<FlipDis
         if (player.isShiftKeyDown() || !player.mayBuild()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         var helper = PlacementHelpers.get(PLACEMENT);
         if (helper.matchesItem(stack)) return helper.getOffset(player, level, state, pos, hit).placeInWorld(level, (BlockItem)stack.getItem(), player, hand, hit);
-        FlipDiscBlockEntity be = getBlockEntity(level, pos);
+        FlipDotBlockEntity be = getBlockEntity(level, pos);
         if (be == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         DyeColor dye = DyeColor.getColor(stack);
         if (dye != null) {

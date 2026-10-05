@@ -15,10 +15,10 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public final class MediaScreen extends AbstractSimiScreen {
-    public static final net.minecraft.client.resources.model.ModelResourceLocation PREVIEW_MODEL=net.minecraft.client.resources.model.ModelResourceLocation.standalone(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("create_signs_of_life","block/flip_disc_preview"));
+    public static final net.minecraft.client.resources.model.ModelResourceLocation PREVIEW_MODEL=net.minecraft.client.resources.model.ModelResourceLocation.standalone(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("create_signs_of_life","block/flip_dot_preview"));
     private static final int RIGHT=166, RIGHT_WIDTH=57;
 
-    private static final ExecutorService WORKER=Executors.newSingleThreadExecutor(r->{var t=new Thread(r,"flip-disc-media");t.setDaemon(true);return t;});
+    private static final ExecutorService WORKER=Executors.newSingleThreadExecutor(r->{var t=new Thread(r,"flip-dot-media");t.setDaemon(true);return t;});
     private final BlockPos pos;
     private final int columns,rows;
     private EditBox source;
@@ -224,7 +224,7 @@ public final class MediaScreen extends AbstractSimiScreen {
             g.flush();g.pose().pushPose();g.pose().translate(guiLeft+282,guiTop+windowHeight-39,100);g.pose().scale(34,-34,34);
             g.pose().mulPose(com.mojang.math.Axis.XP.rotationDegrees(20));g.pose().mulPose(com.mojang.math.Axis.YP.rotationDegrees(150));
             com.mojang.blaze3d.platform.Lighting.setupFor3DItems();
-            minecraft.getItemRenderer().render(new net.minecraft.world.item.ItemStack(com.zmm2025.createsignsoflife.ModContent.FLIP_DISC.get()),
+            minecraft.getItemRenderer().render(new net.minecraft.world.item.ItemStack(com.zmm2025.createsignsoflife.ModContent.FLIP_DOT.get()),
                 net.minecraft.world.item.ItemDisplayContext.NONE,false,g.pose(),g.bufferSource(),15728880,
                 net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,minecraft.getModelManager().getModel(PREVIEW_MODEL));
             g.flush();g.pose().popPose();
@@ -243,7 +243,7 @@ public final class MediaScreen extends AbstractSimiScreen {
     private void drawPreview(GuiGraphics g){
         int px=guiLeft+29,py=guiTop+58,pw=128,ph=95;
         int front=0xF9FFFE,back=0x1D1D21;
-        if(minecraft.level!=null&&minecraft.level.getBlockEntity(pos) instanceof com.zmm2025.createsignsoflife.flipdisc.FlipDiscBlockEntity tile){front=tile.discColor();back=tile.backColor();}
+        if(minecraft.level!=null&&minecraft.level.getBlockEntity(pos) instanceof com.zmm2025.createsignsoflife.flipdot.FlipDotBlockEntity tile){front=tile.discColor();back=tile.backColor();}
         g.fill(px,py,px+pw,py+ph,0xFF242424);
         if(busy){AllIcons.I_REFRESH.render(g,px+56,py+30);g.drawCenteredString(font,text("Loading media"),px+64,py+54,0xD3C6BA);return;}
         if(preview==null){AllIcons.I_SCHEMATIC.render(g,px+56,py+27);g.drawCenteredString(font,text(errorDetail.isEmpty()?"Add an image":"Unable to load"),px+64,py+51,0xD3C6BA);g.drawCenteredString(font,text(errorDetail.isEmpty()?"or a video":"Check the source"),px+64,py+63,0x999999);return;}
